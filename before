@@ -41,6 +41,7 @@ REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-p
 
 Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination         
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            state INVALID
 ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
 ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
 ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
