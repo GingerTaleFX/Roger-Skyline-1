@@ -1,0 +1,65 @@
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+DROP       all  --  10.0.0.0/8           0.0.0.0/0           
+DROP       all  --  169.254.0.0/16       0.0.0.0/0           
+DROP       all  --  172.16.0.0/12        0.0.0.0/0           
+DROP       all  --  127.0.0.0/8          0.0.0.0/0           
+DROP       all  --  192.168.0.0/24       0.0.0.0/0           
+DROP       all  --  224.0.0.0/4          0.0.0.0/0           
+DROP       all  --  0.0.0.0/0            224.0.0.0/4         
+DROP       all  --  240.0.0.0/5          0.0.0.0/0           
+DROP       all  --  0.0.0.0/0            240.0.0.0/5         
+DROP       all  --  0.0.0.0/8            0.0.0.0/0           
+DROP       all  --  0.0.0.0/0            0.0.0.0/8           
+DROP       all  --  0.0.0.0/0            239.255.255.0/24    
+DROP       all  --  0.0.0.0/0            255.255.255.255     
+DROP       icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 17
+DROP       icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 13
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 8 limit: avg 1/sec burst 5
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            state INVALID
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp flags:0x04/0x04 limit: avg 2/sec burst 2
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            recent: CHECK seconds: 86400 name: portscan side: source mask: 255.255.255.255
+           all  --  0.0.0.0/0            0.0.0.0/0            recent: REMOVE name: portscan side: source mask: 255.255.255.255
+LOG        tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:139 recent: SET name: portscan side: source mask: 255.255.255.255 LOG flags 0 level 4 prefix "portscan:"
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:139 recent: SET name: portscan side: source mask: 255.255.255.255
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:443
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:2222
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 8
+REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            state INVALID
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            recent: CHECK seconds: 86400 name: portscan side: source mask: 255.255.255.255
+           all  --  0.0.0.0/0            0.0.0.0/0            recent: REMOVE name: portscan side: source mask: 255.255.255.255
+LOG        tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:139 recent: SET name: portscan side: source mask: 255.255.255.255 LOG flags 0 level 4 prefix "portscan:"
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:139 recent: SET name: portscan side: source mask: 255.255.255.255
+REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:443
+ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:2222
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 8
+REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
+
+Chain SSH (0 references)
+target     prot opt source               destination         
+
+Chain bad_tcp_packets (0 references)
+target     prot opt source               destination         
+
+Chain allowed (0 references)
+target     prot opt source               destination         
+
+Chain tcp_packets (0 references)
+target     prot opt source               destination         
+
+Chain f2b-sshd (0 references)
+target     prot opt source               destination         
